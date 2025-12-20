@@ -99,12 +99,13 @@ function doTapMouse(evt) {
 		evt.preventDefault();
 		doTap(evt, "mouse");
 }
+
 function doTapTouch(evt) {
 		evt.preventDefault();
 		doTap(evt);
 }
-function doTap(event, method) {
 
+function doTap(event, method) {
 		//iOS won't start speaking until speech is triggered
 		//  by an onclick function, so we'll say nothing here
 		//  to turn on speech synthesis
@@ -135,6 +136,12 @@ function doTap(event, method) {
 				timeElem.style.color="#999";
 		}
 
+}
+
+function playSound(sound_name) {
+	const sound = document.getElementById(sound_name);
+	sound.currentTime = 0; 
+	sound.play();
 }
 
 //This function gets called regularly by a setInterval call.
@@ -171,6 +178,9 @@ function updateTimer() {
 						window.speechSynthesis.cancel();
 						window.speechSynthesis.speak(sayTime);
 				}
+				if(playEndBeep) {
+					playSound("beep");
+				}
 				//Alert the operator with a nice red number
 				timeElem.style.color="#A11";
 		}
@@ -198,6 +208,8 @@ function initialize() {
 		readyElem = document.getElementById('ready');
 		timeElem = document.getElementById('time');
 		counterElem = document.getElementById("counter");
+		playEndBeepSelectorElem = document.getElementById("playEndBeepSelector");
+		playWarningBeepSelectorElem = document.getElementById("play5SecondBeepSelector");
 		playVoicesSelectorElem = document.getElementById("playVoicesSelector");
 		maxTimeBoxElem = document.getElementById("maxTimeBox");
 		speechRateSelectorElem = document.getElementById("speechRateSelector");
@@ -238,7 +250,35 @@ function initialize() {
 				}
 		}
 
-		//get playVoices from storage if it's there
+		// get beep options from local storage if there, set if not
+		if (typeof localStorage === 'object') {
+			// end beep settings
+			try {
+				if (localStorage.storedEndBeep == 'undefined') {
+					playEndBeep = 0;
+				} else {
+					var temp = parseInt(localStorage.storedEndBeep);
+					playEndBeep = (temp == 1)? 1 : 0;
+				}
+			} catch (e) {
+				// silently ignore exceptions
+				playEndBeep = 0;
+			}
+			// 5 second warning beep settings
+			try {
+				if (localStorage.storedWarningBeep == 'undefined') {
+					playWarningBeep = 0;
+				} else {
+					var temp = parseInt(localStorage.storedWarningBeep);
+					playWarningBeep = (temp == 1)? 1 : 0;
+				}
+			} catch (e) {
+				// silently ignore exceptions
+				playWarningBeep = 0;
+			}
+		}
+
+		// get playVoices from storage if it's there
 		if(typeof localStorage === 'object') {
 				try {
 						if(typeof localStorage.storedPlayVoices == 'undefined') {
@@ -252,12 +292,15 @@ function initialize() {
 						playVoices = 0;
 				}
 		}
-		//playVoices is 0 or 1 and the selector is "no" or "yes", so the
-		//  correct selected state can be indexed by playVoices
+		// Change settings options to be correct
+		// Each boolean one is 0 or 1 and the selector is "no" or "yes", so the
+		// correct selected state can be indexed by the boolean
+		playEndBeepSelectorElem.options[playEndBeep].selected = true;
+		playWarningBeepSelectorElem.options[playWarningBeep].selected = true;
 		playVoicesSelectorElem.options[playVoices].selected = true;
-
 		timeElem.innerHTML = maxTime;
 		maxTimeBoxElem.value = maxTime;
+		// set initial states
 		counterElem.innerHTML = "00";
 		state = 0;
 
@@ -286,8 +329,8 @@ function initialize() {
 						//silently ignore
 				}
 		}
-		//loop through the speed selector drop down and select
-		//  the appropriate one
+		// loop through the speed selector drop down and select
+		// the appropriate one
 		var numOptions = speechRateSelectorElem.options.length;
 		for(var i=0; i<numOptions; i++) {
 				if(speechRateSelectorElem.options[i].value == rate) {
@@ -308,9 +351,7 @@ function initialize() {
 		var myVar = setInterval(function() {updateCounter();}, 1000);
 
 		settingsOK();
-
 }
-
 
 //If the user forgot to start and wants to jump straight to the five
 //  second warning, this function will do that.
@@ -320,11 +361,14 @@ function jumpToFiveSeconds(event) {
 		event.preventDefault();
 
 		//iOS won't speak until speech is generated in an onclick function,
-		//  so we'll say nothing here in case the user clicks
-		//  "jump to 5 second warning" as the first thing
+		// so we'll say nothing here in case the user clicks
+		// "jump to 5 second warning" as the first thing
 		if(!initializedSpeech) {
 				speechSynthesis.speak(sayNothing);
 				initializedSpeech = 1;
+		}
+		if (playWarningBeep) {
+			playSound("beep");
 		}
 
 		state = 1;
@@ -388,6 +432,18 @@ function settingsOK(evt) {
 				}
 		}
 
+		// beeps
+		playEndBeep = playEndBeepSelectorElem.selectedIndex;
+		playWarningBeep = playWarningBeepSelectorElem.selectedIndex;
+		if (typeof localStorage === 'object') {
+			try {
+				localStorage.storedEndBeep = playEndBeep;
+				localStorage.storedWarningBeep = playWarningBeep;
+			} catch (e) {
+				// silently ignore by doing nothing
+			}
+		}
+
 		//playVoices
 		playVoices = playVoicesSelectorElem.selectedIndex;
 		//store it to localStorage
@@ -447,6 +503,8 @@ function settingsCancel(evt) {
 		//playVoices is 0 or 1 and the selector is "no" or "yes", so the
 		//  correct selected state can be indexed by playVoices
 		playVoicesSelectorElem.options[playVoices].selected = true;
+		playEndBeepSelectorElem.options[playEndBeep].selected = true;
+		playWarningBeepSelectorElem.options[playWarningBeep].selected = true;
 
 		//reset the voices selector
 		speechVoiceSelectorElem.options[voiceIndex].selected = true;

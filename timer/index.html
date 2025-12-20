@@ -81,21 +81,41 @@
 				touch-action: manipulation;
 			}
 			#playVoicesSelector { font-size: 4vmin;}
-			#speechVoiceSelector { font-size: 4vmin;}
-			#speechRateSelector { font-size: 4vmin;}
+			#playEndBeepSelector { font-size: 4vmin;}
+			#play5SecondBeepSelector { font-size: 4vmin;}
+			#speechVoiceSelector { font-size: 2vmin;}
+			#speechRateSelector { font-size: 2vmin;}
 			#maxTimeBox { font-size: 4vmin; width: 10vmin;}
 			#okButton { font-size: 5vmin; }
 			#cancelButton {font-size: 5vmin; }
+			#sounds {visibility: hidden;}
 		</style>
 		<script src="kbtimer.js"></script>
 	</head>
 	<body onload="initialize()">
 		<div id="settings">
 			<div id="settingsInnards">
-				Play voices: <select id="playVoicesSelector"><option value="no">No</option><option value="yes">Yes</option></select><br />
-				Speech voice: <select id="speechVoiceSelector"></select><br />
-				Speech rate: <select id="speechRateSelector"><option value="1.0">1.0</option></select><br />
-				Max seconds: <input type="text" id="maxTimeBox" onchange="checkMaxTime()" /><br />
+				<label for="playEndBeepSelector">Play "time up" beep:</label>
+				<select id="playEndBeepSelector">
+					<option value="no">No</option>
+					<option value="yes">Yes</option>
+				</select><br/>
+				<label for="play5SecondBeepSelector">Play 5 second beep:</label>
+				<select id="play5SecondBeepSelector">
+					<option value="no">No</option>
+					<option value="yes">Yes</option>
+				</select><br/>
+				<label for="playVoicesSelector">Play voices: </label>
+				<select id="playVoicesSelector">
+					<option value="no">No</option>
+					<option value="yes">Yes</option>
+				</select><br />
+				<label for="speechVoiceSelector" style="font-size: 2vmin; margin-left: 4vmin;">Speech voice:</label>
+				<select id="speechVoiceSelector"></select><br />
+				<label for="speechRateSelector" style="font-size: 2vmin; margin-left: 4vmin;">Speech rate:</label>
+				<select id="speechRateSelector"><option value="1.0">1.0</option></select><br />
+				<label for="maxTimeBox">Max seconds:</label>
+				<input type="number" id="maxTimeBox" onchange="checkMaxTime()" /><br />
 				<button id="okButton" >OK</button>
 				<button id="cancelButton">Cancel</button>
 			</div>
@@ -106,6 +126,7 @@
 		<div id="ready">Ready</div>
 		<div id="time"></div>
 		<div id="jumpDiv"><button id="jumpButton">Jump to 5 second warning</button></div>
+		<div id="sounds"><audio id="beep" src="beep.wav" preload="auto"></audio></div>
 	</body>
 </html>
 
