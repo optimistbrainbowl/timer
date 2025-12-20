@@ -166,6 +166,9 @@ function updateTimer() {
 						window.speechSynthesis.cancel();
 						window.speechSynthesis.speak(sayFiveSeconds);
 				}
+				if (playWarningBeep) {
+					playSound("beep");
+				}
 		}
 
 		//Call time
@@ -181,6 +184,7 @@ function updateTimer() {
 				if(playEndBeep) {
 					playSound("beep");
 				}
+				
 				//Alert the operator with a nice red number
 				timeElem.style.color="#A11";
 		}
@@ -367,9 +371,6 @@ function jumpToFiveSeconds(event) {
 				speechSynthesis.speak(sayNothing);
 				initializedSpeech = 1;
 		}
-		if (playWarningBeep) {
-			playSound("beep");
-		}
 
 		state = 1;
 		gaveWarning = false;
@@ -435,6 +436,7 @@ function settingsOK(evt) {
 		// beeps
 		playEndBeep = playEndBeepSelectorElem.selectedIndex;
 		playWarningBeep = playWarningBeepSelectorElem.selectedIndex;
+		// save settings to local storage
 		if (typeof localStorage === 'object') {
 			try {
 				localStorage.storedEndBeep = playEndBeep;
