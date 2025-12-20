@@ -139,9 +139,8 @@ function doTap(event, method) {
 }
 
 function playSound(sound_name) {
-	const sound = document.getElementById(sound_name);
-	sound.currentTime = 0; 
-	sound.play();
+	const beep = new Audio(sound_name);
+	beep.play();
 }
 
 //This function gets called regularly by a setInterval call.
@@ -167,7 +166,7 @@ function updateTimer() {
 						window.speechSynthesis.speak(sayFiveSeconds);
 				}
 				if (playWarningBeep) {
-					playSound("beep");
+					playSound("beep.wav");
 				}
 		}
 
@@ -182,7 +181,7 @@ function updateTimer() {
 						window.speechSynthesis.speak(sayTime);
 				}
 				if(playEndBeep) {
-					playSound("beep");
+					playSound("beep.wav");
 				}
 				
 				//Alert the operator with a nice red number
