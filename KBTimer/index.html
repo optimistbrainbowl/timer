@@ -20,20 +20,66 @@
     <link rel="apple-touch-icon" href="KBTimerIcon192.png" />
     <link rel="icon" sizes="192x192" href="KBTimerIcon192.png" />
 
-		<title>Colorado Knowledge Bowl Timer</title>
+		<title>Timer</title>
 		<style type="text/css">
 			html {touch-action: manipulation;}
 			body {font-family: Helvetica, Arial, "Lucida Grande", sans-serif;}
-			main {position: fixed; top: 0px; left: 0px; width: 100%; height: 100%;}
+			main {
+				position: fixed; 
+				top: 0px; left: 0px; 
+				width: 100%; height: 100%;
+			}
 			#ready { font-size: 20vmin; color: #3A3; text-align: center; }
 			#time { font-size: 40vmin; color: #999; text-align: center; }
-			#counter { font-size: 10vmin; position: fixed; bottom: 1px; left: 1px; }
-			#jumpDiv { padding: 1vmin; position: fixed; bottom: 0; right: 0; z-index: 75;}
-			#jumpButton { -webkit-appearance: none; background-color: #FFF; border: solid #000 1px; font-size: 5vmin; text-align: center; white-space: normal; height: 300%; }
-			#settingsButtonDiv { position: fixed; top: 1vmin; left: 1vmin; touch-action: manipulation; z-index: 75;}
-			#settingsButton {-webkit-appearance: none; background-color: #FFF; border: solid #000 1px; font-size: 5vmin;}
-			#settings { font-size: 5vmin; z-index:100; position: fixed; top: 10%; left: 10%; width: 80%; height: 80%; border-style: solid; background-color: #FFFACD; visibility: hidden; display: flex; align-items: center; justify-content: center;}
-			#touchCaptureDiv { position: fixed; top: 0px; left: 0px; width: 100%; height: 100%; margin: 0; padding: 0; z-index: 50; touch-action: manipulation;}
+			#counter {
+				font-size: 10vmin; 
+				position: fixed; 
+				top: 1px; right: 1px;
+			}
+			#jumpDiv { 
+				padding: 1vmin; 
+				position: fixed; 
+				bottom: 0; right: 0; 
+				width: 100%; height: 25vh;
+				z-index: 75;
+			}
+			#jumpButton { 
+				-webkit-appearance: none; appearance: none;
+				background-color: #FFF; border: solid #000 1px; 
+				font-size: 5vmin; text-align: center; 
+				white-space: normal; 
+				height: 100%; width: 100%
+			}
+			#settingsButtonDiv { 
+				position: fixed;
+				top: 1vmin; left: 1vmin;
+				touch-action: manipulation;
+				z-index: 75;
+			}
+			#settingsButton {
+				-webkit-appearance: none; appearance: none;
+				background-color: #FFF; border: solid #000 1px;
+				font-size: 5vmin;
+			}
+			#settings { 
+				font-size: 5vmin; 
+				z-index:100;
+				position: fixed; 
+				top: 10%; left: 10%; 
+				width: 80%; height: 80%; 
+				border-style: solid; background-color: #FFFACD; 
+				visibility: hidden; 
+				display: flex; 
+				align-items: center; justify-content: center;
+			}
+			#touchCaptureDiv { 
+				position: fixed; 
+				top: 0px; left: 0px; 
+				margin: 0; padding: 0; 
+				width: 100%; height: 100%; 
+				z-index: 50; 
+				touch-action: manipulation;
+			}
 			#playVoicesSelector { font-size: 4vmin;}
 			#speechVoiceSelector { font-size: 4vmin;}
 			#speechRateSelector { font-size: 4vmin;}
@@ -56,10 +102,10 @@
 		</div>
 		<div id="touchCaptureDiv"></div>
 		<div id="settingsButtonDiv"><button id="settingsButton">&equiv;</button></div>
+		<div id="counter"></div>
 		<div id="ready">Ready</div>
 		<div id="time"></div>
-		<div id="counter"></div>
-		<div id="jumpDiv"><button id="jumpButton">Jump to<br />5 second<br />warning</button></div>
+		<div id="jumpDiv"><button id="jumpButton">Jump to 5 second warning</button></div>
 	</body>
 </html>
 

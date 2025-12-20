@@ -1,7 +1,8 @@
 ////////////////////////////////////////////
-// Knoledge Bowl Timer
+// Brain Bowl Bowl Timer
 //
-// Copyright 2017 Casey Smith
+// Original KBTimer Copyright 2017 Casey Smith
+// Modified 2025 for Colorado/Wyoming Optimist Brain Bowl by Silas Mitchell
 //
 // Permission is hereby granted, free of charge, to any person
 // obtaining a copy of this software and associated documentation
