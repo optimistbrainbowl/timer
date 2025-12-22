@@ -80,7 +80,8 @@
 				z-index: 50; 
 				touch-action: manipulation;
 			}
-			#playVoicesSelector { font-size: 4vmin;}
+			#playEndVoicesSelector { font-size: 4vmin;}
+			#playWarningVoicesSelector { font-size: 4vmin;}
 			#playEndBeepSelector { font-size: 4vmin;}
 			#play5SecondBeepSelector { font-size: 4vmin;}
 			#speechVoiceSelector { font-size: 2vmin;}
@@ -105,8 +106,13 @@
 					<option value="no">No</option>
 					<option value="yes">Yes</option>
 				</select><br/>
-				<label for="playVoicesSelector">Play voices: </label>
-				<select id="playVoicesSelector">
+				<label for="playEndVoicesSelector">Play voices at end: </label>
+				<select id="playEndVoicesSelector">
+					<option value="no">No</option>
+					<option value="yes">Yes</option>
+				</select><br />
+				<label for="playWarningVoicesSelector">Play voices at 5 seconds: </label>
+				<select id="playWarningVoicesSelector">
 					<option value="no">No</option>
 					<option value="yes">Yes</option>
 				</select><br />
@@ -126,7 +132,10 @@
 		<div id="ready">Ready</div>
 		<div id="time"></div>
 		<div id="jumpDiv"><button id="jumpButton">Jump to 5 second warning</button></div>
-		<!-- <div id="sounds"><audio id="beep" src="https://github.com/optimistbrainbowl/timer/blob/master/timer/beep.wav?raw=true" preload="true"></audio></div> -->
+		<!-- <div id="sounds">
+			<audio id="beep" src="https://github.com/optimistbrainbowl/timer/blob/master/timer/beep.wav?raw=true" preload="true"></audio>
+			<audio id="silence" src="https://github.com/anars/blank-audio/blob/master/500-milliseconds-of-silence.mp3?raw=true" preload="true"></audio>
+		</div> -->
 	</body>
 </html>
 

@@ -47,7 +47,10 @@ var initializedSpeech = 0;
 //Parameters the user can change
 var maxTime = 15;
 var lang = "en-gb";
-var playVoices = false;
+var playEndVoices = false;
+var playWarningVoices = false;
+var playEndBeep = false;
+var playWarningBeep = false;
 var rate = 2.0;
 if(isMac) {
 		rate = 1.4;
@@ -72,7 +75,10 @@ var voices;
 var readyElem;
 var timeElem;
 var counterElem;
-var playVoicesSelectorElem;
+var playEndVoicesSelectorElem;
+var playWarningVoicesSelectorElem;
+var playWarningBeepSelectorElem;
+var playEndBeepSelectorElem;
 var maxTimeBoxElem;
 var speechRateSelectorElem;
 var settingsElem;
@@ -111,6 +117,7 @@ function doTap(event, method) {
 		//  to turn on speech synthesis
 		if(!initializedSpeech) {
 				window.speechSynthesis.speak(sayNothing);
+				playSound("silence.mp3");
 				initializedSpeech = 1;
 		}
 		if(state==0) {
@@ -138,6 +145,7 @@ function doTap(event, method) {
 
 }
 
+// Play sounds
 function playSound(sound_name) {
 	const beep = new Audio(sound_name);
 	beep.play();
@@ -161,7 +169,7 @@ function updateTimer() {
 		//Give the five second warning
 		if(remaining == 5 && !gaveWarning) {
 				gaveWarning = true;
-				if(playVoices) {
+				if(playWarningVoices) {
 						window.speechSynthesis.cancel();
 						window.speechSynthesis.speak(sayFiveSeconds);
 				}
@@ -176,7 +184,7 @@ function updateTimer() {
 				clearInterval(interval);
 				//Set the state to time expired (2)
 				state=2;
-				if(playVoices) {
+				if(playEndVoices) {
 						window.speechSynthesis.cancel();
 						window.speechSynthesis.speak(sayTime);
 				}
@@ -213,7 +221,8 @@ function initialize() {
 		counterElem = document.getElementById("counter");
 		playEndBeepSelectorElem = document.getElementById("playEndBeepSelector");
 		playWarningBeepSelectorElem = document.getElementById("play5SecondBeepSelector");
-		playVoicesSelectorElem = document.getElementById("playVoicesSelector");
+		playEndVoicesSelectorElem = document.getElementById("playEndVoicesSelector");
+		playWarningVoicesSelectorElem = document.getElementById("playWarningVoicesSelector");
 		maxTimeBoxElem = document.getElementById("maxTimeBox");
 		speechRateSelectorElem = document.getElementById("speechRateSelector");
 		settingsElem = document.getElementById("settings");
@@ -222,7 +231,7 @@ function initialize() {
 		touchCaptureDivElem = document.getElementById("touchCaptureDiv");
 		jumpButtonElem = document.getElementById("jumpButton");
 		settingsButtonElem = document.getElementById("settingsButton");
-		okayButtonElem = document.getElementById("okButton");
+		okButtonElem = document.getElementById("okButton");
 		cancelButtonElem = document.getElementById("cancelButton");
 
 		//add event listeners
@@ -230,13 +239,13 @@ function initialize() {
 				touchCaptureDivElem.addEventListener("touchend", doTapTouch, false);
 				jumpButtonElem.addEventListener("touchend", jumpToFiveSeconds, false);
 				settingsButtonElem.addEventListener("touchend", showSettings, false);
-				okayButtonElem.addEventListener("touchend", settingsOK, false);
+				okButtonElem.addEventListener("touchend", settingsOK, false);
 				cancelButtonElem.addEventListener("touchend", settingsCancel, false);
 		} else {
 				touchCaptureDivElem.addEventListener("mouseup", doTapMouse, false);
 				jumpButtonElem.addEventListener("mouseup", jumpToFiveSeconds, false);
 				settingsButtonElem.addEventListener("mouseup", showSettings, false);
-				okayButtonElem.addEventListener("mouseup", settingsOK, false);
+				okButtonElem.addEventListener("mouseup", settingsOK, false);
 				cancelButtonElem.addEventListener("mouseup", settingsCancel, false);
 		}
 
@@ -284,15 +293,26 @@ function initialize() {
 		// get playVoices from storage if it's there
 		if(typeof localStorage === 'object') {
 				try {
-						if(typeof localStorage.storedPlayVoices == 'undefined') {
-								playVoices = 0;
+						if(typeof localStorage.storedPlayEndVoices == 'undefined') {
+								playEndVoices = 0;
 						} else {
-								var temp = parseInt(localStorage.storedPlayVoices);
-								playVoices = (temp == 1)? 1 : 0;
+								var temp = parseInt(localStorage.storedPlayEndVoices);
+								playEndVoices = (temp == 1)? 1 : 0;
 						}
 				} catch (e) {
 						//silently ignore
-						playVoices = 0;
+						playEndVoices = 0;
+				}
+				try {
+						if(typeof localStorage.storedPlayWarningVoices == 'undefined') {
+								playWarningVoices = 0;
+						} else {
+								var temp = parseInt(localStorage.storedPlayWarningVoices);
+								playWarningVoices = (temp == 1)? 1 : 0;
+						}
+				} catch (e) {
+						//silently ignore
+						playWarningVoices = 0;
 				}
 		}
 		// Change settings options to be correct
@@ -300,7 +320,8 @@ function initialize() {
 		// correct selected state can be indexed by the boolean
 		playEndBeepSelectorElem.options[playEndBeep].selected = true;
 		playWarningBeepSelectorElem.options[playWarningBeep].selected = true;
-		playVoicesSelectorElem.options[playVoices].selected = true;
+		playEndVoicesSelectorElem.options[playEndVoices].selected = true;
+		playWarningVoicesSelectorElem.options[playWarningVoices].selected = true;
 		timeElem.innerHTML = maxTime;
 		maxTimeBoxElem.value = maxTime;
 		// set initial states
@@ -368,6 +389,7 @@ function jumpToFiveSeconds(event) {
 		// "jump to 5 second warning" as the first thing
 		if(!initializedSpeech) {
 				speechSynthesis.speak(sayNothing);
+				playSound("silence.mp3");
 				initializedSpeech = 1;
 		}
 
@@ -402,7 +424,8 @@ function checkMaxTime() {
 }
 
 function blurAll() {
-		playVoicesSelectorElem.blur();
+		playEndVoicesSelectorElem.blur();
+		playWarningVoicesSelectorElem.blur();
 		maxTimeBoxElem.blur();
 		speechRateSelectorElem.blur();
 		speechVoiceSelectorElem.blur();
@@ -446,11 +469,20 @@ function settingsOK(evt) {
 		}
 
 		//playVoices
-		playVoices = playVoicesSelectorElem.selectedIndex;
+		playEndVoices = playEndVoicesSelectorElem.selectedIndex;
 		//store it to localStorage
 		if(typeof localStorage === 'object') {
 				try {
-						localStorage.storedPlayVoices = playVoices;
+						localStorage.storedPlayEndVoices = playEndVoices;
+				} catch (e) {
+						//silently ignore
+				}
+		}
+		playWarningVoices = playEndVoicesSelectorElem.selectedIndex;
+		//store it to localStorage
+		if(typeof localStorage === 'object') {
+				try {
+						localStorage.storedPlayWarningVoices = playEndVoices;
 				} catch (e) {
 						//silently ignore
 				}
@@ -503,7 +535,8 @@ function settingsCancel(evt) {
 
 		//playVoices is 0 or 1 and the selector is "no" or "yes", so the
 		//  correct selected state can be indexed by playVoices
-		playVoicesSelectorElem.options[playVoices].selected = true;
+		playEndVoicesSelectorElem.options[playEndVoices].selected = true;
+		playWarningVoicesSelectorElem.options[playWarningVoices].selected = true;
 		playEndBeepSelectorElem.options[playEndBeep].selected = true;
 		playWarningBeepSelectorElem.options[playWarningBeep].selected = true;
 
