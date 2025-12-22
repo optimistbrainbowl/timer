@@ -470,6 +470,7 @@ function settingsOK(evt) {
 
 		//playVoices
 		playEndVoices = playEndVoicesSelectorElem.selectedIndex;
+		playWarningVoices = playWarningVoicesSelectorElem.selectedIndex;
 		//store it to localStorage
 		if(typeof localStorage === 'object') {
 				try {
