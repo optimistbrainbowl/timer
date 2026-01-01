@@ -72,6 +72,10 @@ var URLs = [
   `${GHPATH}/index.html`,
   `${GHPATH}/help.html`,
   `${GHPATH}/timer.js`,
-  `${GHPATH}/media/sounds/beep.wav`,
-  `${GHPATH}/media/sounds/silence.mp3`
+  `https://github.com/optimistbrainbowl/timer/blob/master/media/icons/app_144.png`,
+  `https://github.com/optimistbrainbowl/timer/blob/master/media/icons/app_192.png`,
+  `https://github.com/optimistbrainbowl/timer/blob/master/media/icons/favicon_32.png`,
+  `https://github.com/optimistbrainbowl/timer/blob/master/media/icons/maskable_512.png`,
+  `https://github.com/optimistbrainbowl/timer/blob/master/media/sounds/beep.wav`,
+  `https://github.com/optimistbrainbowl/timer/blob/master/media/sounds/silence.mp3`
 ]
