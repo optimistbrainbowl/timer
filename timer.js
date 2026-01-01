@@ -48,6 +48,7 @@ var silence = new Audio("media/sounds/silence.mp3");
 var beep = new Audio("media/sounds/beep.wav");
 
 // References to document elements; we will fill these once the page loads
+var settingsPageElem;
 var warnDiv;
 var timesDiv;
 var endSoundsSelectorElem;
@@ -102,9 +103,13 @@ function initialize() {
     // Allow modification of "advanced" settings as at top
     if (warningSoundsAllowed) {
         warnDiv.style.display="block";
+    } else {
+        warnDiv.style.display="none";
     }
     if (changeTimesAllowed) {
         timesDiv.style.display="block";
+    } else {
+        timesDiv.style.display="none";
     }
 
     // Add event listeners (instead of defining buttons with onclick)
