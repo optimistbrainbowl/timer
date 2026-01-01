@@ -45,7 +45,7 @@ function updateWarnVoice(number) {
     sayWarning.rate = rate;
 }
 var silence = new Audio("/timer/media/sounds/silence.mp3");
-var beep = new Audio("/timer/media/sounds/beep.wav");
+var beep = new Audio("/timer/media/sounds/beep.mp3");
 
 // References to document elements; we will fill these once the page loads
 var settingsPageElem;

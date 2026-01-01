@@ -1,6 +1,6 @@
 // Current version
 // Increment number whenever files change to refresh cache!
-const VERSION = "0.1";
+const VERSION = "0.0.1";
 
 // Path prefix for all files
 const GHPATH = '/timer';
@@ -15,7 +15,7 @@ const URLs = [
     `${GHPATH}/media/icons/app_192.png`,
     `${GHPATH}/media/icons/favicon_32.png`,
     `${GHPATH}/media/icons/maskable_512.png`,
-    `${GHPATH}/media/sounds/beep.wav`,
+    `${GHPATH}/media/sounds/beep.mp3`,
     `${GHPATH}/media/sounds/silence.mp3`
 ]
 
@@ -52,17 +52,14 @@ const putInCache = async (request, response) => {
     await cache.put(request,response);
 }
 
-// Default fallback: main timer
-const fallback = "/index.html";
-
-// Processes a request, using fallbackURL if it can't fetch it
-const cacheFirst = async ({request, fallbackURL}) => {
+// Processes a request, trying network if it can't fetch from cache
+const cacheFirst = async (request) => {
     // First, attempt to get from cache
     const responseFromCache = await caches.match(request);
     if (responseFromCache) {
         return responseFromCache;
     }
-    // Otherwise, attempt to get over network from fallback URL
+    // Otherwise, attempt to get over network
     try {
         const responseFromNetwork = await fetch(request);
         // If we got something, clone it
@@ -70,12 +67,7 @@ const cacheFirst = async ({request, fallbackURL}) => {
         putInCache(request, responseFromNetwork.clone());
         return responseFromNetwork;
     } catch (error) {
-        const fallbackResponse = await caches.match(fallbackURL);
-        // If the fallback is found, return that
-        if (fallbackResponse) {
-            return fallbackResponse;
-        }
-        // Otherwise, error 404
+        // Error 404
         return new Response("Network error happened", {
             status: 408,
             headers: {"Content-Type": "text/plain"}
