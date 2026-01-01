@@ -1,51 +1,247 @@
 <!DOCTYPE html>
-<html lang="en">
-	<head>
-		<link rel="icon" type="image/png" href="timer/KBTimerIcon32.png">
-		<meta charset="utf-8">
-		<title>Optimist Brain Bowl timer</title>
-		<style type="text/css">
-			html, body {font-size: 5vmin; width: 100%}
-			main {position: fixed; top: 0px; left: 0px; width: 100%;}
-			h1 {font-size: 250%}
-			p {line-height: 1.2; width:100%}
-			ul {line-height: 1.5;}
-			#KBTimerIcon { width: 10vmin; height: 10vmin; vertical-align: middle;}
-		</style>
-	</head>
-	<body>
-		<main>
-			<h1>Timer</h1>
-			<p>	This timer is a simple web application for timing questions for Optimist Brain Bowl (forked from a timer from Colorado Knowledge Bowl).</p>
-			<a href="timer"><p><img src="timer/KBTimerIcon256.png" alt="Timer" id="KBTimerIcon" /><span style="padding-left: 0.25em;">Open Now</span></p></a>
-			<p>Features and instructions (including phone and tablet installation):
-				<ul>
-					<li>The timer starts at 15 seconds.</li>
-					<li>Tap the screen to start the countdown.</li>
-					<li>Tap again to reset to 15 seconds.</li>
-					<li>Works even without an internet connection.</li>
-					<li>Can provide an auditory "beep" at 5 seconds and/or time.</li>
-					<li>Can provide a spoken 5-second warning and call "time" when time is up (which is useful for running practice, but should probably not be used during tournaments).</li>
-					<li>The lower left has a continually counting clock as a backup for manual counting of time.</li>
-					<li>Tap the button in the lower right to jump to 5 seconds remaining.</li>
-					<li>Tap the button in the upper left to access the settings</li>
-					<li>Available settings:
-						<ul>
-							<li>Whether or not to speak the five second warning and time expiration</li>
-							<li>Which voice to use (available voices are device dependent)</li>
-							<li>How fast to speak</li>
-							<li>How many seconds to provide in the countdown (default 15)</li>
-						</ul>
-					</li>
-					<li> Installation instructions:
-						<ul>
-							<li>Can be installed as an icon on the home screen of a phone or tablet. <i>(Make sure to set your screen auto-lock delay to be long enough so that you don't end up with a black screen in the middle of practice or a round!)</i></li>
-							<li>Android: Open in Chrome. Tap the three dots in the upper right of the browser and select "Add to Home screen."</li>
-							<li>iOS: Open in Safari.  In the browser controls, tap the icon that's a square with an arrow coming up out of it.  Scroll over and select "Add to Home Screen."</li>
-						</ul>
-					</li>
-				</ul>
-			</p>
-		</main>
-	</body>
+<html lang="en" manifest="app.webmanifest">
+    <head>
+        <link rel="icon" type="image/png" href="media/icons/favicon_32.png">
+        <link rel="canonical" href="https://optimistbrainbowl.github.io/timer/">
+        <link rel="manifest" href="app.webmanifest">
+        <meta charset="utf-8">
+
+        <!-- Tell devices that this can be a web app, and set title/image -->
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="application-name" content="Brain Bowl Timer">
+        <meta name="msapplication-TileImage" content="media/icons/app_144.png">
+        <!-- <link rel="icon" sizes="192x192" href="media/icons/app_192.png"> -->
+        <!-- For Apple devices, too -->
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-title" content="Brain Bowl Timer">
+        <link rel="apple-touch-icon" href="media/icons/app_192.png">
+
+        <script>
+            if (navigator.serviceWorker) {
+                navigator.serviceWorker.register (
+                '/timer/serviceworker.js',
+                {scope: '/timer/'}
+                )
+            }
+        </script>
+
+        <!-- Scaling -->
+        <meta name="viewport" content="
+            width = device-width,
+            initial_scale = 1,
+            user-scalable = no
+        ">
+        
+        <title>Timer</title>
+
+        <style type="text/css">
+            body {
+                background-color: #fefefe;
+                transition: .5s ease;
+            }
+            html {touch-action: manipulation}
+            body {font-family: Helvetica, Arial, "lucida Grande", sans-serif;}
+            main {
+                position: fixed;
+                top: 0px; left: 0px;
+                width: 100%; height: 100%;
+            }
+            #ready {font-size: 20vmin; color: #33AA33; text-align: center;}
+            #time {font-size: 40vmin; color: #999999; text-align: center;}
+            #counter {
+                font-size: 10vmin;
+                position: fixed;
+                top: 1px; right: 1px;
+                visibility: hidden;
+            }
+            #jumpDiv {
+                padding-left: 1vmin; padding-right: 1vmin;
+                padding-bottom: 1vmin; padding-top: 0;
+                box-sizing: border-box;
+                position: fixed;
+                bottom: 0; left: 0;
+                width: 100%; height: 26vh;
+                z-index: 75;
+            }
+            #jumpButton {
+                color: #002E57; background-color: #9EC9E3;
+                border: #9EC9E3; border-radius: 1vmin;
+                font-size: 10vmin;
+                align-items: center;
+                white-space: normal;
+                height: 100%; width: 100%;
+            }
+            #touchCaptureDiv {
+                position: fixed;
+                top: 0px; left: 0px;
+                margin: 0; padding: 0;
+                width: 100%; height: 100%;
+                z-index: 50;
+                touch-action: manipulation;
+            }
+            #settingsHelpDiv {
+                position: fixed;
+                top: 1vmin; left: 1vmin;
+                z-index: 75;
+                touch-action: manipulation;
+            }
+            #settingsButton {
+                color: #002E57; background-color: #9EC9E3;
+                border: #9EC9E3; border-radius: 1vmin;
+                padding: 1vmin;
+                display: inline-flex;
+                cursor: pointer;
+            }
+            #helpButton {
+                margin-top: 1vmin;
+                color: #002E57; background-color: #9EC9E3;
+                border: #9EC9E3; border-radius: 1vmin;
+                padding: 1vmin;
+                display: inline-flex; 
+                cursor: pointer;
+            }
+            #settings {
+                font-size: 5vmin;
+                z-index: 100;
+                position: fixed;
+                top: 10%; left: 10%;
+                width: 80%; height: 80%;
+                border-radius: 1vmin; border-style: solid;
+                border-color: #002E57; background-color: #d8e9f4;
+                visibility: hidden;
+                display: flex;
+                align-items: center; justify-content: center;
+                transition: .2s;
+            }
+            #endSoundSelector, #warnSoundSelector, #showCounterSelector {font-size: 4vmin;}
+            #speechVoiceSelector, #speechRateSelector {font-size: 3vmin;}
+            #fullTimeBox, #warnTimeBox {font-size: 4vmin; width: 10vmin;}
+            #okButton, #cancelButton {font-size: 5vmin;}
+            .theme-switch {
+                display: inline-block;
+                height: 34px;
+                position: relative;
+                width: 60px;
+            }
+            .theme-switch input {display:none;}
+            .slider-dark {
+                background-color: #44CCFF;
+                top: 0; bottom: 0;
+                left: 0; right: 0;
+                position: absolute;
+                cursor: pointer;
+                transition: .2s;
+                border-radius: 34px;
+            }
+            .slider-dark:before {
+                background-color: #FFFF44;
+                bottom: 4px;
+                content: "";
+                height: 26px;
+                left: 4px;
+                position: absolute;
+                transition: .2s;
+                width: 26px;
+                border-radius: 50%;
+            }
+            input:checked + .slider-dark {background-color: #2b2b2b;}
+            input:checked + .slider-dark:before {transform: translateX(26px); background-color: #666666;}
+            .slider-apple {
+                background-color:#AAAAAA;
+                top: 0; bottom: 0;
+                left: 0; right: 0;
+                position: absolute;
+                cursor: pointer;
+                transition: .2s;
+                border-radius: 34px;
+            }
+            .slider-apple:before {
+                background-color: #F0F0F0;
+                bottom: 4px; left: 4px;
+                content: "";
+                height: 26px;
+                position: absolute;
+                transition: .2s;
+                width: 26px;
+                border-radius: 50%;
+            }
+            input:checked + .slider-apple {background-color: #33CC33;}
+            input:checked + .slider-apple:before {transform: translateX(26px);}
+            .slider.round {border-radius: 34px;}
+            .slider.round:before {border-radius: 50%;}
+            /* on is ball to right off is ball left */
+        </style>
+        <script src="timer.js"></script>
+    </head>
+    <body onload="initialize()">
+        <div id="settings">
+            <div id="settingsInnards" style="line-height: 1.4;">
+                <!-- End sounds -->
+                <label for="endSoundSelector">"Time up" sound:</label>
+                <select id="endSoundSelector">
+                    <option value="none">No sound</option>
+                    <option value="voice">Voices</option>
+                    <option value="beep">Beep</option>
+                </select><br/>
+                <!-- Warning sounds (in a div so this option can easily be hidden) -->
+                <div id="warnSoundsEnabled">
+                    <label id="warnSoundSelectorLabel" for="warnSoundSelector">Warning sound:</label>
+                    <select id="warnSoundSelector">
+                        <option value="none">No sound</option>
+                        <option value="voice">Voices</option>
+                        <option value="beep">Beep</option>
+                    </select><br/>
+                </div>
+                <!-- Speech options -->
+                <label for="speechVoiceSelector" style="font-size:3vmin; margin-left:2vmin;">Speech voice:</label>
+                <select id="speechVoiceSelector"></select><br/>
+                <label for="speechRateSelector" style="font-size:3vmin; margin-left:2vmin;">Speech rate:</label>
+                <select id="speechRateSelector"></select><br/>
+                <!-- Time options (in a div so this option can be easily hidden) -->
+                <div id="timeOptionsEnabled">
+                    <label for="fullTimeBox">Full question time (default: 15 seconds)</label>
+                    <input type="number" id="fullTimeBox"><br/>
+                    <label for="warnTimeBox">Short question time (default: 5 seconds)</label>
+                    <input type="number" id="warnTimeBox"><br/>
+                </div>
+                <!-- Backup counter -->
+                <label for="showCounterSelector">Show backup counter:</label>
+                <label class="theme-switch">
+                    <input type="checkbox" id="showCounterSelector">
+                    <span class="slider-apple"></span>
+                </label><br>
+                <!-- <select id="showCounterSelector">
+                    <option value="no">No</option>
+                    <option value="yes">Yes</option>
+                </select><br> -->
+                <!-- Dark mode -->
+                <!-- <label for="darkModeSwitch">Toggle light/dark mode</label>
+                <label class="theme-switch">
+                    <input type="checkbox" id="darkModeSwitch">
+                    <span class="slider-dark"></span>
+                </label><br> -->
+                <!-- Ok/cancel options -->
+                <button id="okButton">OK</button>
+                <button id="cancelButton">Cancel</button>
+            </div>
+        </div>
+        <div id="touchCaptureDiv"></div>
+        <div id="settingsHelpDiv">
+            <button id="settingsButton">
+                <svg xmlns="http://www.w3.org/2000/svg" width="10vmin" height="10vmin" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">
+                <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
+                </svg>
+            </button>
+            <br>
+            <a href="./help.html" id="helpButton">
+                <svg xmlns="http://www.w3.org/2000/svg" width="10vmin" height="10vmin" fill="currentColor" class="bi bi-question-circle-fill" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.496 6.033h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286a.237.237 0 0 0 .241.247m2.325 6.443c.61 0 1.029-.394 1.029-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94 0 .533.425.927 1.01.927z"/>
+                </svg>
+            </a>
+        </div>
+		<div id="counter"></div>
+		<div id="ready">Ready</div>
+		<div id="time"></div>
+		<div id="jumpDiv"><button id="jumpButton"></button></div>
+    </body>
 </html>
