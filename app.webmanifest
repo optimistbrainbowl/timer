@@ -16,7 +16,7 @@
     "icons": [
         {
             "src": "/timer/media/icons/favicon_32.png",
-            "type": "image/png",
+            "type": "img/png",
             "sizes": "32x32"
         },
         {

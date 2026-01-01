@@ -2,13 +2,47 @@
 // Increment number whenever files change to refresh cache!
 const VERSION = "0.0.1";
 
+// Path prefix for all files
+const GHPATH = '/timer';
+
+// The files to make available for offline use
+const URLs = [   
+    `${GHPATH}/`,
+    `${GHPATH}/index.html`,
+    `${GHPATH}/help.html`,
+    `${GHPATH}/timer.js`,
+    `${GHPATH}/media/icons/app_144.png`,
+    `${GHPATH}/media/icons/app_192.png`,
+    `${GHPATH}/media/icons/favicon_32.png`,
+    `${GHPATH}/media/icons/maskable_512.png`,
+    `${GHPATH}/media/sounds/beep.wav`,
+    `${GHPATH}/media/sounds/silence.mp3`
+]
+
 // On install, caches pages and files
-self.addEventListener("install", (e) => {
+self.addEventListener("install", (event) => {
     console.log("Service worker installed");
-    e.waitUntil(
+    event.waitUntil(
         caches.open(VERSION)
-        .then((cache) => cache.addAll(URLs),),
-        console.log("App files installed to cache.")
+        .then((cache) => {
+            console.log("Caching assets for offline use...");
+            cache.addAll(URLs);
+        })
+    );
+});
+
+// Delete old caches
+self.addEventListener("activate", (event) => {
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.map((cacheName) => {
+                    if (cacheName !== VERSION) {
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        })
     );
 });
 
@@ -59,23 +93,5 @@ self.addEventListener("fetch", (event) => {
     );
 });
 
-// Change this to your repository name
-var GHPATH = '/timer';
-
 // Choose a different app prefix name
 var APP_PREFIX = 'bbtimer_';
-
-// The files to make available for offline use. make sure to add 
-// others to this list
-var URLs = [    
-    `${GHPATH}/`,
-    `${GHPATH}/index.html`,
-    `${GHPATH}/help.html`,
-    `${GHPATH}/timer.js`,
-    `${GHPATH}/media/icons/app_144.png`,
-    `${GHPATH}/media/icons/app_192.png`,
-    `${GHPATH}/media/icons/favicon_32.png`,
-    `${GHPATH}/media/icons/maskable_512.png`,
-    `${GHPATH}/media/sounds/beep.wav`,
-    `${GHPATH}/media/sounds/silence.mp3`
-]
