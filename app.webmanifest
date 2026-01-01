@@ -4,7 +4,7 @@
     "description": "Custom timer for Optimist Brain Bowl",
 
     "scope": "/timer/",
-    "start_url": "/",
+    "start_url": "/timer/",
 
     "display": "standalone",
     "display_override": "minimal-ui",
