@@ -8,8 +8,8 @@ self.addEventListener("install", (e) => {
     e.waitUntil(
         caches.open(VERSION)
         .then((cache) => cache.addAll(URLs),),
+        console.log("App files installed to cache.")
     );
-    console.log("App files installed to cache.")
 });
 
 // Puts a request/response pair into the current version's cache
@@ -68,14 +68,14 @@ var APP_PREFIX = 'bbtimer_';
 // The files to make available for offline use. make sure to add 
 // others to this list
 var URLs = [    
-  `${GHPATH}/`,
-  `${GHPATH}/index.html`,
-  `${GHPATH}/help.html`,
-  `${GHPATH}/timer.js`,
-  `https://github.com/optimistbrainbowl/timer/blob/master/media/icons/app_144.png`,
-  `https://github.com/optimistbrainbowl/timer/blob/master/media/icons/app_192.png`,
-  `https://github.com/optimistbrainbowl/timer/blob/master/media/icons/favicon_32.png`,
-  `https://github.com/optimistbrainbowl/timer/blob/master/media/icons/maskable_512.png`,
-  `https://github.com/optimistbrainbowl/timer/blob/master/media/sounds/beep.wav`,
-  `https://github.com/optimistbrainbowl/timer/blob/master/media/sounds/silence.mp3`
+    `${GHPATH}/`,
+    `${GHPATH}/index.html`,
+    `${GHPATH}/help.html`,
+    `${GHPATH}/timer.js`,
+    `${GHPATH}/media/icons/app_144.png`,
+    `${GHPATH}/media/icons/app_192.png`,
+    `${GHPATH}/media/icons/favicon_32.png`,
+    `${GHPATH}/media/icons/maskable_512.png`,
+    `${GHPATH}/media/sounds/beep.wav`,
+    `${GHPATH}/media/sounds/silence.mp3`
 ]
