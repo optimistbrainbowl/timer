@@ -7,7 +7,7 @@
     "start_url": "/timer/",
 
     "display": "standalone",
-    "display_override": "minimal-ui",
+    "display_override": ["minimal-ui"],
 
     "theme_color": "#6EC1E4",
     "lang": "en-US",
