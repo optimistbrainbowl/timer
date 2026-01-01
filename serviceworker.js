@@ -1,6 +1,6 @@
 // Current version
 // Increment number whenever files change to refresh cache!
-const VERSION = "0.1";
+const VERSION = "0.0.1";
 
 // On install, caches pages and files
 self.addEventListener("install", (e) => {
