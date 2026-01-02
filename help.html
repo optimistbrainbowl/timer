@@ -5,6 +5,7 @@
         <title>Help</title>
         <link rel="icon" type="image/png" href="/timer/media/icons/favicon_32.png">
         <link rel="manifest" href="/timer/app.webmanifest">
+
         <link rel="stylesheet" href="/timer/sliders.css">
         <style type="text/css">
             /* Light mode */
@@ -39,6 +40,41 @@
                 border-radius: 3vmin;
             }
         </style>
+
+        <script>
+            const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+            var darkMode = false;
+            var themeSwitch;
+
+            function initialize() {
+                try {
+                    if (localStorage.storedDarkMode || prefersDark.matches) {
+                        darkMode = true;
+                    }
+                } catch (e) {}
+                setTheme(darkMode);
+
+                themeSwitch = document.getElementById("darkModeSwitch");
+                themeSwitch.addEventListener("change", themeToggle, false);
+            }
+
+            function setTheme(dark) {
+                if (dark) {
+                    document.documentElement.setAttribute("data-theme","dark");
+                } else {
+                    document.documentElement.setAttribute("data-theme","light");
+                }
+                if (typeof localStorage === "object") {
+                    try {
+                        localStorage.storedDarkMode = (dark)? 1 : 0;
+                    } catch (e) {}
+                }
+            }
+
+            function themeToggle() {
+                setTheme(themeSwitch.checked);
+            }
+        </script>
     </head>
     <body>
         <div id="themeDiv">
