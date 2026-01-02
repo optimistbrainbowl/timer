@@ -33,32 +33,26 @@ self.addEventListener("install", (event) => {
             console.log("Caching assets for offline use...");
             cache.addAll(URLs);
         })
-    );
+    ).then(() => {self.skipWaiting();})
 });
-
-function fetchCache() {
-    console.log("Looking for cache...");
-    caches.open(VERSION)
-    .then((cache) => {
-        cache.addAll(URLs);
-    })
-}
 
 // Delete old caches
 self.addEventListener("activate", (event) => {
     const keepMe = [VERSION];
     event.waitUntil(
-        caches.keys().then((keyList) => 
-            Promise.all(
-                keyList.map((key) => {
-                    if (!keepMe.includes(key)) {
-                        console.log("Deleting cache ", key);
-                        return caches.delete(key);
-                    } return undefined;
-                }),
-            ),
-        ),
-        fetchCache();
+        Promise.all([
+            self.clients.claim(),
+            caches.keys().then((keyList) => 
+                Promise.all(
+                    keyList.map((key) => {
+                        if (!keepMe.includes(key)) {
+                            console.log("Deleting cache ", key);
+                            return caches.delete(key);
+                        } return undefined;
+                    }),
+                ),
+            )
+        ])
     );
 });
 
