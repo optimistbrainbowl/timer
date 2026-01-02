@@ -43,19 +43,20 @@
 
         <script>
             const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
-            var darkMode = false;
             var themeSwitch;
 
             function initialize() {
+                const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+                themeSwitch = document.getElementById("darkModeSwitch");
+                themeSwitch.addEventListener("change", () => {setTheme(themeSwitch.checked)}, false);
+                
+                console.log("init");
                 try {
                     if (localStorage.storedDarkMode || prefersDark.matches) {
-                        darkMode = true;
+                        darkMode = true; 
                     }
                 } catch (e) {}
                 setTheme(darkMode);
-
-                themeSwitch = document.getElementById("darkModeSwitch");
-                themeSwitch.addEventListener("change", themeToggle, false);
             }
 
             function setTheme(dark) {
@@ -69,14 +70,12 @@
                         localStorage.storedDarkMode = (dark)? 1 : 0;
                     } catch (e) {}
                 }
-            }
-
-            function themeToggle() {
-                setTheme(themeSwitch.checked);
+                themeSwitch.checked = dark;
+                console.log(dark);
             }
         </script>
     </head>
-    <body>
+    <body onload="initialize()">
         <div id="themeDiv">
             <label class="slider-body">
                 <input type="checkbox" id="darkModeSwitch">
@@ -85,7 +84,14 @@
         </div>
         <main>
             <h1>Optimist Brain Bowl Timer</h1>
-            <a href="/timer/index.html"><p style="align-items: center;"><img src="media/icons/favicon_32.png" alt="Timer icon"><span style="padding-left: 0.25em;"><span style="align-items: center">Open timer</span></span></p></a>
+            <a href="/timer/index.html">
+                <p style="align-items: center;">
+                    <img src="/timer/media/icons/favicon_32.png" alt="Timer icon">
+                    <span style="padding-left: 0.25em;">
+                        <span style="align-items: center">Open timer</span>
+                    </span>
+                </p>
+            </a>
             <p>This progressive web app provides a basic timing utility for Optimist Brain Bowl competitions.</p>
             <li> Installation instructions:
                 <ul>

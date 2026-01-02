@@ -36,6 +36,14 @@ self.addEventListener("install", (event) => {
     );
 });
 
+function fetchCache() {
+    console.log("Looking for cache...");
+    caches.open(VERSION)
+    .then((cache) => {
+        cache.addAll(URLs);
+    })
+}
+
 // Delete old caches
 self.addEventListener("activate", (event) => {
     const keepMe = [VERSION];
@@ -53,12 +61,6 @@ self.addEventListener("activate", (event) => {
     );
 });
 
-// Puts a request/response pair into the current version's cache
-const putInCache = async (request, response) => {
-    const cache = await caches.open(VERSION);
-    await cache.put(request,response);
-}
-
 // Processes a request, trying network if it can't fetch from cache
 const cacheFirst = async (request) => {
     // First, attempt to get from cache
@@ -68,6 +70,7 @@ const cacheFirst = async (request) => {
     }
     // Otherwise, attempt to get over network
     try {
+        // fetchCache();
         const responseFromNetwork = await fetch(request);
     } catch (error) {
         // Error if no network connection
