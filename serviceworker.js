@@ -13,7 +13,7 @@ const URLs = [
     `${GHPATH}/index.html`,
     `${GHPATH}/help.html`,
     `${GHPATH}/timer.js`,
-    `${GHPATH}/sliders.css`,
+    `${GHPATH}/media/css/sliders.css`,
     // `${GHPATH}/media/icons/app_144.png`,
     // `${GHPATH}/media/icons/app_192.png`,
     `${GHPATH}/media/icons/favicon_32.png`,
@@ -23,6 +23,8 @@ const URLs = [
     `${GHPATH}/media/sounds/beep.mp3`,
     `${GHPATH}/media/sounds/silence.mp3`
 ]
+
+console.log("SW evaluated at", Date.now());
 
 async function precache(cache, urls) {
     for (const url of urls) {
