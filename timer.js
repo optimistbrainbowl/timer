@@ -555,6 +555,7 @@ function settingsCancel(event) {
         }
     }
     speechVoiceSelectorElem.options[voiceIndex].selected = true;
+    darkModeSwitchElem.checked = darkMode;
     setTheme(darkMode);
     // Close settings
     settingsPageElem.style.visibility = "hidden";
