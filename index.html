@@ -11,7 +11,7 @@
             // Install service worker 
             if (navigator.serviceWorker) {
                 window.addEventListener("load", () => {
-                navigator.serviceWorker.register('/timer/serviceworker.js')
+                navigator.serviceWorker.register('/timer/sw.js')
                     .then((registration) => {
                         console.log("Registered with scope ", registration.scope);
                     })
