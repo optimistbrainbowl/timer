@@ -3,14 +3,15 @@
 const VERSION = "0.0.1";
 
 // Choose a different app prefix name
-var APP_PREFIX = 'bbtimer_';
+const APP_PREFIX = 'bbtimer_';
+const CACHE_NAME = APP_PREFIX + VERSION;
 
 // Path prefix for all files
 const GHPATH = '/timer';
 
 // The files to make available for offline use
 const URLs = [   
-    `${GHPATH}/`,
+    // `${GHPATH}/`,
     `${GHPATH}/index.html`,
     `${GHPATH}/help.html`,
     `${GHPATH}/timer.js`,
@@ -26,7 +27,7 @@ const URLs = [
 self.addEventListener("install", (event) => {
     console.log("Service worker installed");
     event.waitUntil(
-        caches.open(VERSION)
+        caches.open(CACHE_NAME)
         .then((cache) => {
             console.log("Caching assets for offline use...");
             cache.addAll(URLs);
@@ -40,7 +41,7 @@ self.addEventListener("activate", (event) => {
         caches.keys().then((cacheNames) => {
             return Promise.all(
                 cacheNames.map((cacheName) => {
-                    if (cacheName !== VERSION) {
+                    if (cacheName !== CACHE_NAME) {
                         return caches.delete(cacheName);
                     }
                 })
@@ -51,7 +52,7 @@ self.addEventListener("activate", (event) => {
 
 // Puts a request/response pair into the current version's cache
 const putInCache = async (request, response) => {
-    const cache = await caches.open(VERSION);
+    const cache = await caches.open(CACHE_NAME);
     await cache.put(request,response);
 }
 
@@ -78,8 +79,6 @@ const cacheFirst = async (request) => {
 // Handles fetch requests
 self.addEventListener("fetch", (event) => {
     event.respondWith(
-        cacheFirst({
-            request: event.request,
-        }),
+        cacheFirst(event.request),
     );
 });
