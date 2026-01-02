@@ -58,6 +58,7 @@ self.addEventListener("activate", (event) => {
                 }),
             ),
         ),
+        fetchCache();
     );
 });
 
