@@ -9,7 +9,7 @@ const GHPATH = '/timer';
 // All files are listed here, but in a "cache less" philosophy
 // some nonessential ones are commented out.
 const URLs = [   
-    `${GHPATH}/`,
+    // `${GHPATH}/`,
     `${GHPATH}/index.html`,
     `${GHPATH}/help.html`,
     `${GHPATH}/timer.js`,
@@ -24,31 +24,44 @@ const URLs = [
     `${GHPATH}/media/sounds/silence.mp3`
 ]
 
+async function precache(cache, urls) {
+    for (const url of urls) {
+        const response = await fetch(url, { cache: "no-store" });
+
+        if (!response.ok || response.status === 206) {
+            throw new Error(`Cannot cache ${url} (status ${response.status})`);
+        }
+
+        await cache.put(url, response);
+    }
+}
+
 // On install, caches pages and files
 self.addEventListener("install", (event) => {
     console.log("Service worker installed");
     event.waitUntil(
         caches.open(VERSION)
-        .then((cache) => {
+        .then(async (cache) => {
             console.log("Caching assets for offline use...");
-            cache.addAll(URLs);
+            await precache(cache, URLs);
+            self.skipWaiting();
         })
-    ).then(() => {self.skipWaiting();})
+    );
 });
 
 // Delete old caches
 self.addEventListener("activate", (event) => {
-    const keepMe = [VERSION];
+    console.log("Service worker activating...")
     event.waitUntil(
         Promise.all([
             self.clients.claim(),
             caches.keys().then((keyList) => 
                 Promise.all(
                     keyList.map((key) => {
-                        if (!keepMe.includes(key)) {
+                        if (key !== VERSION) {
                             console.log("Deleting cache ", key);
                             return caches.delete(key);
-                        } return undefined;
+                        } return caches;
                     }),
                 ),
             )
