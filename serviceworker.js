@@ -1,6 +1,6 @@
 // Current version
 // Change version whenever files change to refresh cache!
-const VERSION = "0";
+const VERSION = "1.0";
 
 // Path prefix for all files
 const GHPATH = '/timer';
@@ -58,31 +58,31 @@ const putInCache = async (request, response) => {
 }
 
 // Processes a request, trying network if it can't fetch from cache
-const cacheFirst = async (request) => {
-    // First, attempt to get from cache
-    const responseFromCache = await caches.match(request);
-    if (responseFromCache) {
-        return responseFromCache;
-    }
-    // Otherwise, attempt to get over network
-    try {
-        const responseFromNetwork = await fetch(request);
-        // If we got something, clone it
-        // Cache the clone and return the original
-        putInCache(request, responseFromNetwork.clone());
-        return responseFromNetwork;
-    } catch (error) {
-        // Error if no network connection
-        return new Response("Needed file not found in cache, and network connection not found.", {
-            status: 408,
-            headers: {"Content-Type": "text/plain"}
-        });
-    }
-}
+// const cacheFirst = async (request) => {
+//     // First, attempt to get from cache
+//     const responseFromCache = await caches.match(request);
+//     if (responseFromCache) {
+//         return responseFromCache;
+//     }
+//     // Otherwise, attempt to get over network
+//     try {
+//         const responseFromNetwork = await fetch(request);
+//         // If we got something, clone it
+//         // Cache the clone and return the original
+//         putInCache(request, responseFromNetwork.clone());
+//         return responseFromNetwork;
+//     } catch (error) {
+//         // Error if no network connection
+//         return new Response("Needed file not found in cache, and network connection not found.", {
+//             status: 408,
+//             headers: {"Content-Type": "text/plain"}
+//         });
+//     }
+// }
 
-// Handles fetch requests
-self.addEventListener("fetch", (event) => {
-    event.respondWith(
-        cacheFirst({request: event.request}),
-    );
-});
+// // Handles fetch requests
+// self.addEventListener("fetch", (event) => {
+//     event.respondWith(
+//         cacheFirst({request: event.request}),
+//     );
+// });
