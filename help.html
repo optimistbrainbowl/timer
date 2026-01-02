@@ -5,56 +5,92 @@
         <title>Help</title>
         <link rel="icon" type="image/png" href="/timer/media/icons/favicon_32.png">
         <link rel="manifest" href="/timer/app.webmanifest">
+        <link rel="stylesheet" href="./sliders.css">
         <style type="text/css">
-            html, body {
-                font-size: 5vmin; 
-                width: 100%;
+            /* Light mode */
+            :root {
+                --background-color: #f8f8f8;
+                --text-color: #000000;
+                --link-color: #1a73e8;
+                --rule-color: #808080;
+            }
+            [data-theme="dark"] {
+                --background-color: #101010;
+                --text-color: #f0f0f0;
+                --link-color: #8ab4f8;
+                --rule-color: #a0a0a0;
+            }
+            body {
+                background-color: var(--background-color);
+                color: var(--text-color);
+                font-size: 5vmin;
                 font-family: Helvetica, Arial, "lucida Grande", sans-serif;
             }
+            a {color: var(--link-color)}
             h1 {font-size: 150%;}
             p {line-height: 1.2;}
             ul {line-height: 1.5; margin-top: auto}
-            hr {display: block; border-top: 2px;}
+            hr {display: block; border-top: 1px solid var(--rule-color)}
+            #themeDiv {
+                position: fixed;
+                top: 0px; right: 0px;
+                padding-left: 1vmin; padding-right: 1vmin;
+                background-color: var(--background-color);
+                border-radius: 3vmin;
+            }
         </style>
     </head>
     <body>
+        <div id="themeDiv">
+            <label class="slider-body">
+                <input type="checkbox" id="darkModeSwitch">
+                <span class="slider-theme"></span>
+            </label>
+        </div>
         <main>
             <h1>Optimist Brain Bowl Timer</h1>
-            <a href="/timer/index.html"><p style="align-items: center;"><img src="media/icons/favicon_32.png" alt="Timer" id="Timer icon"><span style="padding-left: 0.25em;"><span style="align-items: center">Open timer</span></span></p></a>
+            <a href="/timer/index.html"><p style="align-items: center;"><img src="media/icons/favicon_32.png" alt="Timer icon"><span style="padding-left: 0.25em;"><span style="align-items: center">Open timer</span></span></p></a>
             <p>This progressive web app provides a basic timing utility for Optimist Brain Bowl competitions.</p>
             <li> Installation instructions:
                 <ul>
-                    <li>Android: Open in your favorite web browser (known to work on Chrome and Firefox). Tap the three dots in the upper right of the browser and select "Add to Home screen".</li>
+                    <li>Android: Open in your favorite web browser (known to work on Firefox and non-incognito Chrome). Tap the three dots in the upper right of the browser and select "Add to Home screen" (you may have to hit a button for more options to see this).</li>
                     <li>iOS: Open in Safari.  In the browser controls, tap the icon that's a square with an arrow coming up out of it.  Scroll over and select "Add to Home Screen".</li>
+                    <li>Desktop: When using Chrome, an install option will appear in the address bar. Other browsers may also offer installation via the address bar or in the hamburger menu, but this is not guaranteed as PWA installation is not fully standardized across all browsers.</li>
                 </ul>
             </li>
+            After installation, the app should cache all needed files offline, so does not require Wi-Fi or mobile data for basic functionality in subsequent launches. An internet connection is still required to recieve any updates.
             <hr>
             <li>Usage instructions:
                 <ul>
-                    <li>For settings, hit the button in the upper left corner</li>
-                    <li>For a 5 second timer (second team when question was read fully), hit the button across the bottom of the screen</li>
-                    <li>For a 15 second timer (first team or second team when question was not read fully), hit anywhere else on the screen</li>
+                    <li>To see this page again, tap the question mark button in the upper left corner</li>
+                    <li>For settings, tap the gear button in the upper left corner</li>
+                    <li>For a 5 second timer (second team when question was read fully), tap the button across the bottom of the screen</li>
+                    <li>For a 15 second timer (first team or second team when question was not read fully) or to stop and reset the timer, tap anywhere else on the screen</li>
                 </ul>
             </li>
+            <p>If desired, a backup counter is available in settings. This displays the last two digits of seconds since launch in the upper right-hand corner, giving you something that increments each second automatically.</p>
             <hr>
             <li>Features:
                 <ul>
-                    <li>Voice or beep for time up (voice on by default; beep recommended for non-Apple devices)</li>
+                    <li>Voice or beep for time up (voice on by default; beep recommended for most non-Apple devices as the voices can be very quiet)</li>
                     <li>Speech speed and voice settings (depends on the available voices on your device)</li>
-                    <li>Persistent setting storage - your settings last until you clear the cache</li>
-                    <li>Optional dark mode</li>
-                    <li>Prebuilt functionality to allow warning sounds and changing timing intervals (not enabled on all distributions)</li>
+                    <li>Persistent setting storage - your settings last until you clear the cache, even after closing/reopening the app</li>
+                    <li>Full offline functionality</li>
+                    <!-- <li>Optional dark mode</li> --> <!-- TODO -->
+                    <li>Devtools-enabled functionality to allow warning sounds and changing timing intervals (not available by default on this distribution; see first lines of `timer.js`)</li>
                 </ul>
             </li>
             <hr>
             <div id="copyright" style="font-size: 2vmin;">
-                <p>License information:</p>
-                <p>Copyright 2025 Silas Mitchell</p>
+                <h2>License information:</h2>
+                <p>Copyright 2025-2026 Silas Mitchell.</p>
                 <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
                 <p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
                 <p>THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
                 <p>Inspired by the <a href="https://kbtimer.github.io/KBTimer/">Colorado Knowledge Bowl timer</a> by Casey Smith.</a></p>
             </div>
+            <hr>
+            <p style="font-size: 2vmin">Actively maintained as of the 2026 competition season. Feedback and bug reports via Github issues are appreciated! Contributions welcome via merge request.</p>
         </main>
     </body>
 </html>

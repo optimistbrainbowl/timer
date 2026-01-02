@@ -5,18 +5,10 @@
         <link rel="canonical" href="https://optimistbrainbowl.github.io/timer/">
         <link rel="manifest" href="/timer/app.webmanifest">
         <meta charset="utf-8">
-
-        <!-- Tell devices that this can be a web app, and set title/image -->
-        <!-- <meta name="mobile-web-app-capable" content="yes">
-        <meta name="application-name" content="Brain Bowl Timer">
-        <meta name="msapplication-TileImage" content="/timer/media/icons/app_144.png"> -->
-        <!-- <link rel="icon" sizes="192x192" href="/timer/media/icons/app_192.png"> -->
-        <!-- For Apple devices, too -->
-        <!-- <meta name="apple-mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-title" content="Brain Bowl Timer">
-        <link rel="apple-touch-icon" href="/timer/media/icons/app_192.png"> -->
+        <title>Brain Bowl Timer</title>
 
         <script>
+            // Install service worker 
             if (navigator.serviceWorker) {
                 window.addEventListener("load", () => {
                 navigator.serviceWorker.register('/timer/serviceworker.js')
@@ -29,12 +21,38 @@
                 });
             }
         </script>
-        
-        <title>Timer</title>
-
+        <script src="/timer/timer.js">//Timer implementation</script>
+       
+        <link rel="stylesheet" href="/timer/sliders.css">
         <style type="text/css">
+            /* Light mode colors */
+            :root {
+                --background-color: #fefefe;
+                --text-color: #000000;
+                --ready-color: #33AA33;
+                --timer-ready: #999999;
+                --timer-running: #000000;
+                --timer-done: #AA1111;
+                --button-back: #9EC9E3;
+                --button-text: #002E57;
+                --settings-background: #d8e9f4;
+            }
+            /* Dark mode colors */
+            [data-theme="dark"] {
+                --background-color: #101010;
+                --text-color: #f0f0f0;
+                --ready-color: #33AA33;
+                --timer-ready: #777777;
+                --timer-running: #f0f0f0;
+                --timer-done: #AA1111;
+                --button-back: #002E57;
+                --button-text: #9EC9E3;
+                --settings-background: #202020;
+            }
+
+            /* Basic formatting and fonts */
             body {
-                background-color: #fefefe;
+                background-color: var(--background-color);
                 transition: .5s ease;
             }
             html {touch-action: manipulation}
@@ -44,26 +62,32 @@
                 top: 0px; left: 0px;
                 width: 100%; height: 100%;
             }
-            #ready {font-size: 20vmin; color: #33AA33; text-align: center;}
-            #time {font-size: 40vmin; color: #999999; text-align: center;}
+
+            /* Element styles and positioning */
+            #ready {font-size: 20vmin; color: var(--ready-color); text-align: center;}
+            #time {font-size: 40vmin; text-align: center;}
+            #time.ready {color: var(--timer-ready)}
+            #time.running {color: var(--text-color)}
+            #time.done {color: var(--timer-done)}
             #counter {
                 font-size: 10vmin;
                 position: fixed;
                 top: 1px; right: 1px;
                 visibility: hidden;
+                color: var(--text-color);
             }
             #jumpDiv {
                 padding-left: 1vmin; padding-right: 1vmin;
                 padding-bottom: 1vmin; padding-top: 0;
-                box-sizing: border-box;
+                box-sizing: border-box; /* Fix L/R margins uneven */
                 position: fixed;
                 bottom: 0; left: 0;
-                width: 100%; height: 26vh;
+                width: 100%; height: 31vh;
                 z-index: 75;
             }
             #jumpButton {
-                color: #002E57; background-color: #9EC9E3;
-                border: #9EC9E3; border-radius: 1vmin;
+                color: var(--button-text); background-color: var(--button-back);
+                border: var(--button-back); border-radius: 1vmin;
                 font-size: 10vmin;
                 align-items: center;
                 white-space: normal;
@@ -79,97 +103,38 @@
             }
             #settingsHelpDiv {
                 position: fixed;
-                top: 1vmin; left: 1vmin;
+                top: 0px; left: 1vmin;
                 z-index: 75;
                 touch-action: manipulation;
             }
-            #settingsButton {
-                color: #002E57; background-color: #9EC9E3;
-                border: #9EC9E3; border-radius: 1vmin;
+            #settingsButton, #helpButton {
+                color: var(--button-text); background-color: var(--button-back);
+                border: var(--button-back); border-radius: 1vmin;
                 padding: 1vmin;
+                margin-top: 1vmin;
                 display: inline-flex;
                 cursor: pointer;
             }
-            #helpButton {
-                margin-top: 1vmin;
-                color: #002E57; background-color: #9EC9E3;
-                border: #9EC9E3; border-radius: 1vmin;
-                padding: 1vmin;
-                display: inline-flex; 
-                cursor: pointer;
-            }
             #settings {
-                font-size: 5vmin;
-                z-index: 100;
                 position: fixed;
                 top: 10%; left: 10%;
                 width: 80%; height: 80%;
-                border-radius: 1vmin; border-style: solid;
-                border-color: #002E57; background-color: #d8e9f4;
-                visibility: hidden;
-                display: flex;
                 align-items: center; justify-content: center;
-                transition: .4s;
+                color: var(--text-color);
+                border-radius: 2px; border-style: solid;
+                border-color: var(--button-text);
+                background-color: var(--settings-background);
+                font-size: 5vmin;
+                z-index: 100;
+                display: flex;
+                visibility: hidden;
+                transition: .2s;
             }
             #endSoundSelector, #warnSoundSelector, #showCounterSelector {font-size: 4vmin;}
             #speechVoiceSelector, #speechRateSelector {font-size: 3vmin;}
             #fullTimeBox, #warnTimeBox {font-size: 4vmin; width: 10vmin;}
             #okButton, #cancelButton {font-size: 5vmin;}
-            .theme-switch {
-                display: inline-block;
-                height: 34px;
-                position: relative;
-                width: 60px;
-            }
-            .theme-switch input {display:none;}
-            .slider-dark {
-                background-color: #44CCFF;
-                top: 0; bottom: 0;
-                left: 0; right: 0;
-                position: absolute;
-                cursor: pointer;
-                transition: .2s;
-                border-radius: 34px;
-            }
-            .slider-dark:before {
-                background-color: #FFFF44;
-                bottom: 4px;
-                content: "";
-                height: 26px;
-                left: 4px;
-                position: absolute;
-                transition: .2s;
-                width: 26px;
-                border-radius: 50%;
-            }
-            input:checked + .slider-dark {background-color: #2b2b2b;}
-            input:checked + .slider-dark:before {transform: translateX(26px); background-color: #666666;}
-            .slider-apple {
-                background-color:#AAAAAA;
-                top: 0; bottom: 0;
-                left: 0; right: 0;
-                position: absolute;
-                cursor: pointer;
-                transition: .2s;
-                border-radius: 34px;
-            }
-            .slider-apple:before {
-                background-color: #F0F0F0;
-                bottom: 4px; left: 4px;
-                content: "";
-                height: 26px;
-                position: absolute;
-                transition: .2s;
-                width: 26px;
-                border-radius: 50%;
-            }
-            input:checked + .slider-apple {background-color: #33CC33;}
-            input:checked + .slider-apple:before {transform: translateX(26px);}
-            .slider.round {border-radius: 34px;}
-            .slider.round:before {border-radius: 50%;}
-            /* on is ball to right off is ball left */
         </style>
-        <script src="/timer/timer.js"></script>
     </head>
     <body onload="initialize()">
         <div id="settings">
@@ -204,20 +169,16 @@
                 </div>
                 <!-- Backup counter -->
                 <label for="showCounterSelector">Show backup counter:</label>
-                <label class="theme-switch">
+                <label class="slider-body">
                     <input type="checkbox" id="showCounterSelector">
                     <span class="slider-apple"></span>
                 </label><br>
-                <!-- <select id="showCounterSelector">
-                    <option value="no">No</option>
-                    <option value="yes">Yes</option>
-                </select><br> -->
                 <!-- Dark mode -->
-                <!-- <label for="darkModeSwitch">Toggle light/dark mode</label>
-                <label class="theme-switch">
+                <label for="darkModeSwitch">Change theme:</label>
+                <label class="slider-body">
                     <input type="checkbox" id="darkModeSwitch">
-                    <span class="slider-dark"></span>
-                </label><br> -->
+                    <span class="slider-theme"></span>
+                </label><br>
                 <!-- Ok/cancel options -->
                 <button id="okButton">OK</button>
                 <button id="cancelButton">Cancel</button>
@@ -239,7 +200,7 @@
         </div>
 		<div id="counter"></div>
 		<div id="ready">Ready</div>
-		<div id="time"></div>
+		<div id="time" class="ready"></div>
 		<div id="jumpDiv"><button id="jumpButton"></button></div>
     </body>
 </html>

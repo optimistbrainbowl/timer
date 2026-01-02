@@ -1,20 +1,25 @@
 // Current version
-// Increment number whenever files change to refresh cache!
-const VERSION = "0.0.1";
+// Change version whenever files change to refresh cache!
+const VERSION = "a";
 
 // Path prefix for all files
 const GHPATH = '/timer';
 
 // The files to make available for offline use
+// All files are listed here, but in a "cache less" philosophy
+// some nonessential ones are commented out.
 const URLs = [   
     `${GHPATH}/`,
     `${GHPATH}/index.html`,
     `${GHPATH}/help.html`,
     `${GHPATH}/timer.js`,
-    `${GHPATH}/media/icons/app_144.png`,
-    `${GHPATH}/media/icons/app_192.png`,
+    `${GHPATH}/sliders.css`,
+    // `${GHPATH}/media/icons/app_144.png`,
+    // `${GHPATH}/media/icons/app_192.png`,
     `${GHPATH}/media/icons/favicon_32.png`,
     `${GHPATH}/media/icons/maskable_512.png`,
+    // `${GHPATH}/media/icons/sun.png`,
+    // `${GHPATH}/media/icons/moon.png`,
     `${GHPATH}/media/sounds/beep.mp3`,
     `${GHPATH}/media/sounds/silence.mp3`
 ]
@@ -67,8 +72,8 @@ const cacheFirst = async (request) => {
         putInCache(request, responseFromNetwork.clone());
         return responseFromNetwork;
     } catch (error) {
-        // Error 404
-        return new Response("Network error happened", {
+        // Error if no network connection
+        return new Response("Needed file not found in cache, and network connection not found.", {
             status: 408,
             headers: {"Content-Type": "text/plain"}
         });
@@ -78,12 +83,6 @@ const cacheFirst = async (request) => {
 // Handles fetch requests
 self.addEventListener("fetch", (event) => {
     event.respondWith(
-        cacheFirst({
-            request: event.request,
-            fallbackURL: fallback,
-        }),
+        cacheFirst({request: event.request}),
     );
 });
-
-// Choose a different app prefix name
-var APP_PREFIX = 'bbtimer_';

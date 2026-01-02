@@ -1,0 +1,65 @@
+/* Light mode/default colors */
+:root {
+    --apple-slider-thumb: #F0F0F0;
+    --apple-slider-on: #53d769;
+    --apple-slider-off: #AAAAAA;
+    --theme-slider-day-bg: #44CCFF;
+    --theme-slider-night-bg: #2b2b2b;
+    --theme-slider-day-thumb: #ffffaa;
+    --theme-slider-night-fallback: #666666;
+}
+/* Dark mode colors */
+[data-theme="dark"] {
+    --apple-slider-thumb: #F0F0F0;
+    --apple-slider-on: #53d769;
+    --apple-slider-off: #555555;
+    --theme-slider-day-bg: #44CCFF;
+    --theme-slider-night-bg: #2b2b2b;
+    --theme-slider-day-fallback: #ffffcc;
+    --theme-slider-night-ballback: #666666;
+}
+/* Sliders */
+.slider-body {
+    display: inline-block;
+    height: 3.5vmin; width: 6.5vmin;
+    position: relative;
+}
+.slider-body input {display:none;}
+.slider-theme, .slider-apple {
+    width: 100%; height: 100%;
+    border-radius: 1.75vmin;
+    margin: 0;
+    position: absolute;
+    cursor: pointer;
+    transition: .2s;
+}
+.slider-theme:before, .slider-apple:before {
+    height: 3vmin; width: 3vmin;
+    border-radius: 50%;
+    margin: 0.25vmin;
+    content: "";
+    position: absolute;
+    transition: .2s;
+}
+input:checked + .slider-theme:before, input:checked + .slider-apple:before {
+    transform: translateX(3vmin);
+}
+
+/* Theme slider colors and icons */
+.slider-theme {background-color: var(--theme-slider-day-bg);}
+.slider-theme:before {
+    background-color: var(--theme-slider-day-thumb); /* Fallback slider */
+    background-size: 100%;
+    background-image: url("/timer/media/icons/sun.png")
+}
+input:checked + .slider-theme {background-color: var(--theme-slider-night-bg);}
+input:checked + .slider-theme:before {
+    background-color: var(--theme-slider-night-fallback); /* Fallback slider color */
+    background-size: 100%;
+    background-image: url("/timer/media/icons/moon.png")
+}
+
+/* Apple-esque slider colors */
+.slider-apple {background-color: var(--apple-slider-off);}
+.slider-apple:before {background-color: var(--apple-slider-thumb);}
+input:checked + .slider-apple {background-color: var(--apple-slider-on);}

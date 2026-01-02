@@ -1,6 +1,6 @@
 {
     "name": "Optimist Brain Bowl Timer",
-    "short_name": "Timer",
+    "short_name": "BBTimer",
     "description": "Custom timer for Optimist Brain Bowl",
 
     "scope": "/timer/",

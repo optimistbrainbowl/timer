@@ -7,7 +7,10 @@ var warningSoundsAllowed = false;
 var changeTimesAllowed = false;
 
 // Are we on an Apple device? We'll need a different speech rate
-var isApple = navigator.userAgent.toLowerCase().indexOf("mac os") > -1;
+const isApple = navigator.userAgent.toLowerCase().indexOf("mac os") > -1;
+
+// Device preferences
+const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
 
 // Running variables
 var state;
@@ -32,6 +35,7 @@ var voiceIndex;
 var rate;
 var voices;
 var showCounter = false;
+var darkTheme = false;
 
 
 // Sound fragments
@@ -72,6 +76,7 @@ var jumpElem;
 // ##################################################################
 // Initialization
 // ##################################################################
+
 
 // Initial setup function, called when page loads
 function initialize() {
@@ -128,6 +133,7 @@ function initialize() {
         okButtonElem.addEventListener("mouseup", settingsOK, false);
         cancelButtonElem.addEventListener("mouseup", settingsCancel, false);
     }
+    darkModeSwitchElem.addEventListener("change", themeToggle, false);
 
     // Default speech rate
     if (isApple) {
@@ -207,6 +213,18 @@ function initialize() {
                 rate = localStorate.storedSpeechRate;
             }
         } catch (e) {}
+        // dark mode: 
+        try {
+            if (localStorage.storedDarkMode == false) {
+                darkMode = false;
+            } else if (localStorage.storedDarkMode || prefersDark.matches) {
+                localStorage.storedDarkMode = 1;
+                darkMode = true;
+            } else {
+                localStorage.storedDarkMode = 0;
+                darkMode = false;
+            }
+        } catch (e) {}
     }
 
     // Change everything to agree with current settings
@@ -229,6 +247,8 @@ function initialize() {
     updateWarnVoice(partTime);
     sayTime.rate = rate;
     sayWarning.rate = rate;
+    darkModeSwitchElem.checked = darkMode;
+    setTheme(darkMode);
 
     // Get voice list (runs repeatedly to make sure we get the full list)
     voiceGetterInterval = setInterval(function() {getVoicesList();}, 200);
@@ -295,6 +315,7 @@ function getVoicesList() {
                 localStorage.storedVoiceName = voices[defaultIndex].name
                                                + " " + voices[defaultIndex].lang;
             }
+            voiceIndex = defaultIndex;
         } catch (e) {} // silently ignore exceptions
     }
     // Update speech fragments if we have a selected voice
@@ -329,7 +350,8 @@ function doTap(event) {
         var d = new Date();
         startTime = d.getTime();
         readyElem.style.visibility = "hidden";
-        timeElem.style.color = "black";
+        timeElem.classList.remove("ready");
+        timeElem.classList.add("running");
         // Actually counts down
         interval = setInterval(function() {updateTimer();}, 100);
     } else {
@@ -340,7 +362,8 @@ function doTap(event) {
         state = 0;
         readyElem.style.visibility = "visible";
         timeElem.innerHTML = fullTime;
-        timeElem.style.color = "#999999";
+        timeElem.classList.remove("running","done");
+        timeElem.classList.add("ready");
     }
 }
 
@@ -370,7 +393,8 @@ function updateTimer() {
     // Time up
     if (remaining == 0) {
         // Make timer red
-        timeElem.style.color = "#AA1111";
+        timeElem.classList.remove("running");
+        timeElem.classList.add("done");
         // Stop updating and set state
         clearInterval(interval);
         state = 2;
@@ -412,7 +436,8 @@ function jumpToShortTime(event) {
     var d = new Date();
     startTime = d.getTime() - (fullTime - partTime)*1000;
     readyElem.style.visibility = "hidden";
-    timeElem.style.color = "black";
+    timeElem.classList.remove("ready","done");
+    timeElem.classList.add("running");
     interval = setInterval(function() {updateTimer();}, 100);
 }
 
@@ -446,7 +471,7 @@ function settingsOK(event) {
             alert("Full question time must be longer than shortened time!");
         } else {
             fullTime = newFullTime;
-            timeElem.innerHTML = fullTime;
+            if (state !== 2) {timeElem.innerHTML = fullTime};
             partTime = newPartTime;
             jumpElem.innerHTML = partTime + " seconds";
             updateWarnVoice(partTime);
@@ -487,6 +512,9 @@ function settingsOK(event) {
     } else {
         counterElem.style.visibility = "hidden";
     }
+    // Dark mode
+    var darkMode = darkModeSwitchElem.checked;
+    setTheme(darkMode);
 
     // Save new settings
     if (typeof localStorage === "object") {
@@ -498,7 +526,7 @@ function settingsOK(event) {
             localStorage.storedVoiceName = voice.name + " " + voice.lang;
             localStorage.storedSpeechRate = rate;
             localStorage.storedShowCounter = (showCounter)? 1 : 0;
-            localStorage.storedDarkMode = 0;
+            localStorage.storedDarkMode = (darkMode)? 1 : 0;
         } catch (e) {}
     }
 
@@ -510,7 +538,7 @@ function settingsCancel(event) {
     event.stopPropagation();
     event.preventDefault();
     // Reset settings page elements
-    timeElem.innerHTML = fullTime;
+    if (state !== 2) {timeElem.innerHTML = fullTime};
     fullTimeBoxElem.value = fullTime;
     partTimeBoxElem.value = partTime;
     endSoundsSelectorElem.options[endSound].selected = true;
@@ -527,6 +555,24 @@ function settingsCancel(event) {
         }
     }
     speechVoiceSelectorElem.options[voiceIndex].selected = true;
+    setTheme(darkMode);
     // Close settings
     settingsPageElem.style.visibility = "hidden";
+}
+
+// ##################################################################
+// Dark mode
+// ##################################################################
+
+// Set correct theme
+function setTheme(dark) {
+    if (dark) {
+        document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+        document.documentElement.setAttribute("data-theme", "light");
+    }
+}
+
+function themeToggle() {
+    setTheme(darkModeSwitchElem.checked);
 }
