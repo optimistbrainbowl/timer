@@ -1,6 +1,6 @@
 // Current version
 // Change version whenever files change to refresh cache!
-const VERSION = "0.2";
+const VERSION = "0.0.2";
 
 // Path prefix for all files
 const GHPATH = '/timer';
@@ -56,24 +56,24 @@ self.addEventListener("install", (event) => {
 });
 
 // Delete old caches
-self.addEventListener("activate", (event) => {
-    console.log("Service worker activating...")
-    event.waitUntil(
-        Promise.all([
-            self.clients.claim(),
-            caches.keys().then((keyList) => 
-                Promise.all(
-                    keyList.map((key) => {
-                        if (key !== VERSION) {
-                            console.log("Deleting cache ", key);
-                            return caches.delete(key);
-                        } return caches;
-                    }),
-                ),
-            )
-        ])
-    );
-});
+// self.addEventListener("activate", (event) => {
+//     console.log("Service worker activating...")
+//     event.waitUntil(
+//         Promise.all([
+//             self.clients.claim(),
+//             caches.keys().then((keyList) => 
+//                 Promise.all(
+//                     keyList.map((key) => {
+//                         if (key !== VERSION) {
+//                             console.log("Deleting cache ", key);
+//                             return caches.delete(key);
+//                         } return caches;
+//                     }),
+//                 ),
+//             )
+//         ])
+//     );
+// });
 
 // Processes a request, trying network if it can't fetch from cache
 const cacheFirst = async (request) => {
