@@ -1,6 +1,6 @@
 // Current version
 // Change version whenever files change to refresh cache!
-const VERSION = "a";
+const VERSION = "0";
 
 // Path prefix for all files
 const GHPATH = '/timer';
