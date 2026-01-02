@@ -50,7 +50,6 @@
                 themeSwitch = document.getElementById("darkModeSwitch");
                 themeSwitch.addEventListener("change", () => {setTheme(themeSwitch.checked)}, false);
                 
-                console.log("init");
                 try {
                     if (localStorage.storedDarkMode || prefersDark.matches) {
                         darkMode = true; 
@@ -71,7 +70,6 @@
                     } catch (e) {}
                 }
                 themeSwitch.checked = dark;
-                console.log(dark);
             }
         </script>
     </head>
