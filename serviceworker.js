@@ -28,13 +28,17 @@ console.log("SW evaluated at", Date.now());
 
 async function precache(cache, urls) {
     for (const url of urls) {
-        const response = await fetch(url, { cache: "no-store" });
+        try {
+            const response = await fetch(url, { cache: "no-store" });
 
-        if (!response.ok || response.status === 206) {
-            throw new Error(`Cannot cache ${url} (status ${response.status})`);
+            if (!response.ok || response.status === 206) {
+                throw new Error(`Cannot cache ${url} (status ${response.status})`);
+            }
+
+            await cache.put(url, response);
+        } catch (e) {
+            console.warn("Failed to cache", url, err);
         }
-
-        await cache.put(url, response);
     }
 }
 
@@ -93,7 +97,29 @@ const cacheFirst = async (request) => {
 
 // Handles fetch requests
 self.addEventListener("fetch", (event) => {
-    event.respondWith(
-        cacheFirst({request: event.request}),
-    );
+    event.respondWith(async () => {
+        const request = event.request;
+        // Navigation
+        if (request.mode === "navigate") {
+            const cached = await caches.match(`${GHPATH}/index.html`);
+            return cached || fetch(request);
+        }
+        // All other requests
+        // First, attempt to get from cache
+        const responseFromCache = await caches.match(request);
+        if (responseFromCache) {
+            return responseFromCache;
+        }
+        // Otherwise, attempt to get over network
+        try {
+            // fetchCache();
+            const responseFromNetwork = await fetch(request);
+        } catch (error) {
+            // Error if no network connection
+            return new Response(
+                "Needed file not found in cache, and network connection not found.",
+                {status: 408,headers: {"Content-Type": "text/plain"}}
+            );
+        }
+    });
 });
