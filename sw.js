@@ -80,7 +80,6 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(
         cacheFirst({
             request: event.request,
-            fallbackURL: fallback,
         }),
     );
 });
