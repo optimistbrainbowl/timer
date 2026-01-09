@@ -20,7 +20,8 @@ const URLs = [
     `${GHPATH}/media/icons/favicon_32.png`,
     `${GHPATH}/media/icons/maskable_512.png`,
     `${GHPATH}/media/sounds/beep.mp3`,
-    `${GHPATH}/media/sounds/silence.mp3`
+    `${GHPATH}/media/sounds/silence.mp3`,
+    `${GHPATH}/media/css/sliders.css`
 ];
 
 // On install, caches pages and files
