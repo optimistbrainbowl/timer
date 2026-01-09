@@ -51,12 +51,10 @@
                 themeSwitch.addEventListener("change", () => {setTheme(themeSwitch.checked)}, false);
                 
                 try {
-                    if (localStorage.storedDarkMode) {
-                        darkMode = true; 
-                    } else if (localStorage.storedDarkMode == 0) {
-                        darkMode = false;
-                    } else if (localStorage.storedDarkMode == undefined) {
-                        darkMode = prefersDark.matches;
+                    if (localStorage.storedDarkMode == 0) {
+                        darkMode = false; 
+                    } else if (localStorage.storedDarkMode == 1 || prefersDark.matches) {
+                        darkMode = true;
                     }
                 } catch (e) {}
                 setTheme(darkMode);
