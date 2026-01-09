@@ -11,7 +11,7 @@ const GHPATH = '/timer';
 
 // The files to make available for offline use
 const URLs = [   
-    // `${GHPATH}/`,
+    `${GHPATH}/`,
     `${GHPATH}/index.html`,
     `${GHPATH}/help.html`,
     `${GHPATH}/timer.js`,
@@ -21,7 +21,7 @@ const URLs = [
     `${GHPATH}/media/icons/maskable_512.png`,
     `${GHPATH}/media/sounds/beep.mp3`,
     `${GHPATH}/media/sounds/silence.mp3`
-]
+];
 
 // On install, caches pages and files
 self.addEventListener("install", (event) => {
@@ -50,11 +50,7 @@ self.addEventListener("activate", (event) => {
     );
 });
 
-// Puts a request/response pair into the current version's cache
-const putInCache = async (request, response) => {
-    const cache = await caches.open(CACHE_NAME);
-    await cache.put(request,response);
-}
+const fallbackURL = "${GHPATH}/index.html";
 
 // Processes a request, trying network if it can't fetch from cache
 const cacheFirst = async (request) => {
@@ -68,11 +64,15 @@ const cacheFirst = async (request) => {
         const responseFromNetwork = await fetch(request);
         return responseFromNetwork;
     } catch (error) {
-        // Error 408
-        return new Response("Network error happened", {
-            status: 408,
-            headers: {"Content-Type": "text/plain"}
-        });
+        const fallbackResponse = await caches.match(fallbackURL);
+        if (fallbackResponse) {
+            return fallbackResponse;
+        }
+        // Error 408 otherwise
+        return new Response(
+            "Requested page unavailable in offline cache, and network connection not available.",
+            {status: 408, headers: {"Content-Type": "text/plain"}}
+        );
     }
 }
 
